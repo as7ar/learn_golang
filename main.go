@@ -3,9 +3,14 @@ package main
 import (
 	"LearnGo/geometry"
 	"fmt"
-	"reflect"
 	"strconv"
+	"strings"
+	"time"
 )
+
+type Number interface {
+	int | float64
+}
 
 func main() {
 	fmt.Println("Hello", "world")
@@ -75,6 +80,8 @@ func main() {
 
 	fmt.Println(plus(1, 2.0, 3.0))
 
+	// func
+
 	_, vals2 := vals()
 	fmt.Println(vals2)
 
@@ -100,11 +107,15 @@ func main() {
 		fmt.Println(k, v)
 	}
 
+	// Pointer
+
 	x := 10
 	p := &x
 	fmt.Println(x, p)
 	change(p)
 	fmt.Println(x, p)
+
+	// Struct
 
 	person := Person{
 		Name: "Steve",
@@ -120,32 +131,93 @@ func main() {
 
 	var color Color = 1
 	fmt.Println(color.String())
-}
 
-func genPerson(name string) *Person {
-	p := Person{Name: name}
-	p.Age = 32
-	return &p
-}
+	for file := range FindLogFiles("../") { // hmmm. Can't Understand
+		fmt.Println("found:", file)
 
-func change(x *int) {
-	*x = 99
-}
-
-func plus(a int, b, c float32) float32 {
-	fmt.Println(reflect.TypeOf(b))
-
-	return float32(a) + b + c
-}
-
-func vals() (int, int) {
-	return 3, 7
-}
-
-func sum(nums ...int) int {
-	total := 0
-	for _, num := range nums {
-		total += num
+		if strings.Contains(file, "error") {
+			break
+		}
 	}
-	return total
+
+	for x := range Count(5) {
+		fmt.Println(x)
+	}
+
+	// Goroutine
+
+	f("direct")
+
+	go f("goroutine")
+
+	go func(msg string) { fmt.Println(msg) }("TEST")
+
+	time.Sleep(time.Second)
+
+	// Channel
+	done := make(chan bool)
+
+	message := make(chan string, 3)
+	go func() {
+		message <- "hello"
+		done <- true
+	}()
+	message <- "?"
+	fmt.Println(<-message)
+	fmt.Println(<-message)
+
+	<-done
+
+	pings := make(chan string, 1)
+	pongs := make(chan string, 1)
+
+	ping(pings, "pass")
+	pong(pings, pongs)
+	fmt.Println(<-pongs)
+
+	// select
+
+	c1 := make(chan string)
+	c2 := make(chan string)
+
+	go func() {
+		time.Sleep(1 * time.Second)
+		c1 <- "one"
+	}()
+	go func() {
+		time.Sleep(2 * time.Second)
+		c2 <- "two"
+	}()
+
+	i2 := 0
+	for {
+		select {
+		case msg1 := <-c1:
+			fmt.Println("received", msg1)
+			i2 += 1
+			fmt.Println(i2)
+		case msg2 := <-c2:
+			fmt.Println("received", msg2)
+			i2 += 1
+			fmt.Println(i2)
+		}
+		if i2 >= 2 {
+			break
+		}
+	}
+
+}
+
+func ping(pings chan<- string, msg string) {
+	pings <- msg
+}
+func pong(pings <-chan string, pongs chan<- string) {
+	msg := <-pings
+	pongs <- msg
+}
+
+func f(from string) {
+	for i := range 3 {
+		fmt.Println(from, ":", i)
+	}
 }
