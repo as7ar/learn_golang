@@ -94,15 +94,3 @@
 | Value   | Color |
 |---------|-------|
 | \033[0m | Reset |
-
-# other styles
-
-```bash
-echo -e "\033[1mbold\033[0m"
-echo -e "\033[3mitalic\033[0m"
-echo -e "\033[3m\033[1mbold italic\033[0m"
-echo -e "\033[4munderline\033[0m"
-echo -e "\033[9mstrikethrough\033[0m"
-echo -e "\033[31mHello World\033[0m"
-echo -e "\x1B[31mHello World\033[0m"
-```
