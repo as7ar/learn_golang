@@ -1,6 +1,7 @@
 package main
 
 import (
+	"LearnGo/geometry"
 	"fmt"
 	"reflect"
 	"strconv"
@@ -104,6 +105,27 @@ func main() {
 	fmt.Println(x, p)
 	change(p)
 	fmt.Println(x, p)
+
+	person := Person{
+		Name: "Steve",
+		Age:  20,
+		Job:  "Student",
+	}
+	fmt.Println(person.Name)
+
+	fmt.Println(genPerson("Alex").Name)
+
+	rectangle := geometry.Rect{Width: 6, Height: 12}
+	fmt.Println("rec width, height:", rectangle.Height, rectangle.Width, "\narea:", rectangle.Area(), "\nperim:", rectangle.Perim())
+
+	var color Color = 1
+	fmt.Println(color.String())
+}
+
+func genPerson(name string) *Person {
+	p := Person{Name: name}
+	p.Age = 32
+	return &p
 }
 
 func change(x *int) {
