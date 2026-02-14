@@ -99,6 +99,15 @@ func main() {
 		fmt.Println(k, v)
 	}
 
+	x := 10
+	p := &x
+	fmt.Println(x, p)
+	change(p)
+	fmt.Println(x, p)
+}
+
+func change(x *int) {
+	*x = 99
 }
 
 func plus(a int, b, c float32) float32 {
